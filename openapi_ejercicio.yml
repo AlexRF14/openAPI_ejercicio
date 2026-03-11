@@ -1,0 +1,201 @@
+openapi: 3.1.0
+info:
+  title: API de Ejercicio
+  version: 0.0.1
+  description: OpenAPI doc
+paths:
+  /sesiones:
+    get:
+      summary: Get todos las sesiones
+      description: Shows all the sesions on the db
+      parameters:
+        - name: titulo
+          in: query
+          schema:
+            type: string
+        - name: fecha
+          in: query
+          schema:
+            type: string
+            format: date
+        - name: genero
+          in: query
+          schema:
+            type: string
+        - name: hora_inicio
+          in: query
+          schema:
+            type: string
+        - name: duracion
+          in: query
+          schema:
+            type: integer
+        - name: sala
+          in: query
+          schema:
+            type: string
+        - name: formato
+          in: query
+          schema:
+            type: string
+        - name: version
+          in: query
+          schema:
+            type: string
+      responses:
+        "200":
+          description: "OK"
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    titulo:
+                      type: string
+                    fecha:
+                      type: string
+                      format: date
+                    sala:
+                      type: string
+                    link:
+                      type: string
+                      description: URL para obtener la información completa de la sesión.
+        "422":
+          description: Error =)
+    post:
+      summary: POST de una sesión (la crae)
+      description: Crea una nueva sesión al DB
+      requestBody:
+        content:
+          application/json:
+            type: object
+            required: [titulo, fecha, hora_inicio, sala, formato]
+            properties:
+              titulo:
+                type: string
+              fecha:
+                type: string
+                format: date
+              genero:
+                type: string
+              hora_inicio:
+                type: string
+              duracion:
+                type: integer
+              sala:
+                type: string
+              formato:
+                type: string
+                enum: [2D, 3D]
+              version:
+                type: string
+      responses:
+        "201":
+          description: Todo okey, creado
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                    example: "OK"
+                  link:
+                    type: string
+                    example: "/sesiones/1234"
+        "422":
+          description: Error =)
+  
+  /sesiones/{titulo}:
+    get:
+      summary: GET sesión en espećifico
+      description: Obtener una sesión en específico
+      parameters:
+        - name: titulo
+          in: path
+          schema:
+            type: string
+      responses:
+        "200":
+          description: get pero de la sesion en específico, no de todas
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  titulo:
+                    type: string
+                  fecha:
+                    type: string
+                    format: date
+                  sala:
+                    type: string
+                  link:
+                    type: string
+                    description: URL para obtener la información completa de la sesión.
+        "404":
+          description: Sesiçón no encontrada
+        "422":
+          description: El título debe ser un string...
+    put:
+      summary: Actualizar una sesión existente
+      description: Modifica los datos de una sesión identificada por su ID.
+      parameters:
+        - name: titulo
+          in: path
+          schema:
+            type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [titulo, fecha, hora_inicio, sala, formato]
+              properties:
+                titulo:
+                  type: string
+                fecha:
+                  type: string
+                  format: date
+                genero:
+                  type: string
+                hora_inicio:
+                  type: string
+                duracion:
+                  type: integer
+                sala:
+                  type: string
+                formato:
+                  type: string
+                  enum: [2D, 3D]
+                version:
+                  type: string
+      responses:
+        "200":
+          description: Sesión actualizada con éxito
+        "404":
+          description: No se pudo encontrar la sesión para actualizar
+        "422":
+          description: Error en la validación de los datos enviados
+          
+    delete:
+      summary: Eliminar una sesión
+      description: Borra una sesión específica de la base de datos mediante su ID.
+      parameters:
+        - name: titulo
+          in: path
+          required: true
+          description: El identificador único de la sesión a borrar.
+          schema:
+            type: string
+      responses:
+        "204":
+          description: "Sesión eliminada correctamente (No Content)"
+        "404":
+          description: "No se encontró la sesión con ese titulo"
+        "422":
+          description: "El titulo debe ser un string..."
+
+  /peliculas:
