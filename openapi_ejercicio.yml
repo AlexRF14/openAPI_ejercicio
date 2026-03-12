@@ -368,4 +368,37 @@ paths:
           description: "El titulo debe ser un string..."
 
             
-  /peliculas/{id}/sesiones:
+  /peliculas/{titulo}/sesiones:
+    get:
+      summary: Muestra las sesiones de una pelçícula concreta
+      parameters:
+        - name: titulo
+          in: path
+          description: Título de la pelicula
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Lista de sesiones disponibles para la película indicada
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    fecha:
+                      type: string
+                      format: date
+                    hora_inicio:
+                      type: string
+                    sala:
+                      type: string
+                    formato:
+                      type: string
+                      enum: [2D, 3D]
+                    link:
+                      type: string
+                      description: Enlace directo a los detalles de esta sesión específica
+        "404":
+          description: No se encontró la película o no tiene sesiones programadas
