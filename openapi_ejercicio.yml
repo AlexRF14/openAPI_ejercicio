@@ -70,27 +70,28 @@ paths:
       requestBody:
         content:
           application/json:
-            type: object
-            required: [titulo, fecha, hora_inicio, sala, formato]
-            properties:
-              titulo:
-                type: string
-              fecha:
-                type: string
-                format: date
-              genero:
-                type: string
-              hora_inicio:
-                type: string
-              duracion:
-                type: integer
-              sala:
-                type: string
-              formato:
-                type: string
-                enum: [2D, 3D]
-              version:
-                type: string
+            schema:
+              type: object
+              required: [titulo, fecha, hora_inicio, sala, formato]
+              properties:
+                titulo:
+                  type: string
+                fecha:
+                  type: string
+                  format: date
+                genero:
+                  type: string
+                hora_inicio:
+                  type: string
+                duracion:
+                  type: integer
+                sala:
+                  type: string
+                formato:
+                  type: string
+                  enum: [2D, 3D]
+                version:
+                  type: string
       responses:
         "201":
           description: Todo okey, creado
@@ -131,6 +132,8 @@ paths:
                     type: string
                     format: date
                   sala:
+                    type: string
+                  formato:
                     type: string
                   link:
                     type: string
@@ -244,16 +247,17 @@ paths:
       requestBody:
         content:
           application/json:
-            type: object
-            required: [titulo, fecha, duracion]
-            properties:
-              titulo:
-                type: string
-              fecha:
-                type: string
-                format: date
-              duracion:
-                type: integer
+            schema:
+              type: object
+              required: [titulo, fecha, duracion]
+              properties:
+                titulo:
+                  type: string
+                fecha:
+                  type: string
+                  format: date
+                duracion:
+                  type: integer
       responses:
         "201":
           description: Todo okey, creado
@@ -267,6 +271,101 @@ paths:
                     example: "OK"
                   link:
                     type: string
-                    example: "/sesiones/1234"
+                    example: "/peliculas/1234"
         "422":
           description: Error =)
+  /peliculas/{titulo}:
+    get:
+      summary: GET de una pelicula del catálogo
+      description: Ver una pelicula específica
+      parameters:
+        - name: titulo
+          in: path
+          description: titulo requerido para identificar la pelicula y sus detalles
+          schema:
+            type: string
+      responses:
+        "200":
+          description: get pero de la pelicula en específico, no de todas
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  titulo:
+                    type: string
+                  fecha:
+                    type: string
+                    format: date
+                  sala:
+                    type: string
+                  formato:
+                    type: string
+                  link:
+                    type: string
+                    description: URL para obtener la información completa de la sesión.
+        "404":
+          description: Sesión no encontrada
+        "422":
+          description: El título debe ser un string...
+    put:
+      summary: Actualizar una pelicula existente
+      description: Modifica los datos de una pelicula identificada por su titulo.
+      parameters:
+        - name: titulo
+          in: path
+          schema:
+            type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [titulo, fecha, hora_inicio, sala, formato]
+              properties:
+                titulo:
+                  type: string
+                fecha:
+                  type: string
+                  format: date
+                genero:
+                  type: string
+                hora_inicio:
+                  type: string
+                duracion:
+                  type: integer
+                sala:
+                  type: string
+                formato:
+                  type: string
+                  enum: [2D, 3D]
+                version:
+                  type: string
+      responses:
+        "200":
+          description: Pelicula actualizada con éxito
+        "404":
+          description: No se pudo encontrar la pelicula para actualizar
+        "422":
+          description: Error en la validación de los datos enviados
+          
+    delete:
+      summary: Eliminar una pelicula
+      description: Borra una pelicula específica de la base de datos mediante su ID.
+      parameters:
+        - name: titulo
+          in: path
+          required: true
+          description: El identificador único de la pelicula a borrar.
+          schema:
+            type: string
+      responses:
+        "204":
+          description: "Película eliminada correctamente (No Content)"
+        "404":
+          description: "No se encontró la película con ese titulo"
+        "422":
+          description: "El titulo debe ser un string..."
+
+            
+  /peliculas/{id}/sesiones:
